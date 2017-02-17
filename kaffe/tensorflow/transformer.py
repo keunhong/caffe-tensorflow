@@ -139,7 +139,7 @@ class TensorFlowMapper(NodeMapper):
         return TensorFlowNode('lrn', int(params.local_size / 2), alpha, params.beta)
 
     def map_concat(self, node):
-        axis = (2, 3, 1, 0)[node.parameters.axis]
+        axis = (0, 1, 2, 3)[node.parameters.axis]
         return TensorFlowNode('concat', axis)
 
     def map_dropout(self, node):
@@ -260,10 +260,10 @@ class TensorFlowTransformer(object):
                 # Reshape the parameters to TensorFlow's ordering
                 DataReshaper({
                     # (c_o, c_i, h, w) -> (h, w, c_i, c_o)
-                    NodeKind.Convolution: (2, 3, 1, 0),
+                    NodeKind.Convolution: (0, 1, 2, 3),
 
                     # (c_o, c_i) -> (c_i, c_o)
-                    NodeKind.InnerProduct: (1, 0)
+                    NodeKind.InnerProduct: (0, 1)
                 }),
 
                 # Pre-process batch normalization data
